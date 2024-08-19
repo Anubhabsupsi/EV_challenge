@@ -53,7 +53,7 @@ train_total = train_df.groupby('date', as_index=False)['Available'].sum()
 sns.set_theme(style='darkgrid')
 fig, ax = plt.subplots(1,1, figsize=(10,5), layout='tight')
 #sns.lineplot(x='date', y='Available', hue="area", data=train_area.iloc[np.arange(612)], ax=ax)
-sns.lineplot(x='date', y='Available', data=train_total, ax=ax)
+sns.lineplot(x='date', y='Available', data=train_total, ax=ax, markers='.')
 start_date = train_total.iloc[0]['date']
 end_date = train_total.iloc[-1]['date']
 plt.xticks([start_date, end_date], labels=[start_date, end_date])
@@ -62,4 +62,11 @@ ax.set_title('Total distribution of Available charging points')
 plt.show()
 
 
+##Create the hierarchical data
+train_total['unique_id'] = 'Total'
+df_1 = train_total
+df_2 = train_area.rename(columns={'area': 'unique_id'})
+df_3 = train_df.rename(columns={'Station': 'unique_id'})
 
+hier_train = pd.concat([df_1,df_2,df_3[['date','unique_id','Available']]], axis=0)
+print(hier_train)
