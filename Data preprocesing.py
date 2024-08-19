@@ -24,13 +24,42 @@ with zipfile.ZipFile(io.BytesIO(response.content)) as z:
         # Display the first few rows of the dataframe
         print(train_df.head())
 
-
 train_slice = train_df[train_df['Station'].isin(['FR*V75*EBELI*10*1', 'FR*V75*EBELI*11*1'])]
 sns.set_theme(style='darkgrid')
-ax = sns.lineplot(x='date', y='Available', hue="Station", data=train_slice.iloc[np.arange(612)])
+fig, ax = plt.subplots(1,1, figsize=(10,5), layout='tight')
+sns.lineplot(x='date', y='Available', hue="Station", data=train_slice.iloc[np.arange(612)], ax=ax)
+#ax = sns.lineplot(x='date', y='Available', hue="Station", data=train_slice.iloc[np.arange(612)])
 start_date = train_slice.iloc[0]['date']
-end_date = train_slice.iloc[-1]['date']
+end_date = train_slice.iloc[612]['date']
 plt.xticks([start_date, end_date], labels=[start_date, end_date])
+#plt.xticks(rotation=90)
 ax.set_title('Distribution of Available charging points for a slice')
 plt.show()
+
+train_area = train_df.groupby(['date', 'area'], as_index=False)['Available'].sum()
+
+sns.set_theme(style='darkgrid')
+fig, ax = plt.subplots(1,1, figsize=(10,5), layout='tight')
+#sns.lineplot(x='date', y='Available', hue="area", data=train_area.iloc[np.arange(612)], ax=ax)
+sns.lineplot(x='date', y='Available', hue="area", data=train_area, ax=ax)
+start_date = train_area.iloc[0]['date']
+end_date = train_area.iloc[-1]['date']
+plt.xticks([start_date, end_date], labels=[start_date, end_date])
+#plt.xticks(rotation=90)
+ax.set_title('Area-wise distribution of Available charging points')
+plt.show()
+
+train_total = train_df.groupby('date', as_index=False)['Available'].sum()
+sns.set_theme(style='darkgrid')
+fig, ax = plt.subplots(1,1, figsize=(10,5), layout='tight')
+#sns.lineplot(x='date', y='Available', hue="area", data=train_area.iloc[np.arange(612)], ax=ax)
+sns.lineplot(x='date', y='Available', data=train_total, ax=ax)
+start_date = train_total.iloc[0]['date']
+end_date = train_total.iloc[-1]['date']
+plt.xticks([start_date, end_date], labels=[start_date, end_date])
+#plt.xticks(rotation=90)
+ax.set_title('Total distribution of Available charging points')
+plt.show()
+
+
 
